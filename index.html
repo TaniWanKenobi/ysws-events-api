@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YSWS Events</title>
+  <style>
+    body {
+      font-family: 'Phantom Sans', system-ui, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #fbefd6;
+    }
+    h1 {
+      color: #ec3750;
+    }
+    .events-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+    .event-card {
+      background: white;
+      border: 3px solid #222;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 4px 4px 0 #222;
+    }
+    .event-card h3 {
+      margin-top: 0;
+      color: #ec3750;
+    }
+    .status {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 0.9em;
+      font-weight: bold;
+    }
+    .status-active {
+      background: #33d6a6;
+      color: white;
+    }
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background: #ec3750;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+    .btn:hover {
+      background: #d32f44;
+    }     
+  </style>
+</head>
+<body>
+  <h1>Hack Club Events</h1>
+  <p>You Ship, We Ship!</p>
+  
+  <div id="events-container" class="events-grid">
+    <p>Loading events...</p>
+  </div>
+
+  <script>
+    // Fetch events from your API
+    fetch('/api/events')
+      .then(response => response.json())
+      .then(data => {
+        const container = document.getElementById('events-container');
+        
+        if (data.success && data.data.length > 0) {
+          container.innerHTML = data.data.map(event => `
+            <div class="event-card">
+              <h3>${event.Name}</h3>
+              <span class="status status-${event.Status.toLowerCase()}">${event.Status}</span>
+              <p>${event.Description}</p>
+              <p><strong>Due:</strong> ${new Date(event['End Date']).toLocaleDateString()}</p>
+              ${event.Website ? `<a href="${event.Website}" class="btn">Learn More →</a>` : ''}
+            </div>
+          `).join('');
+        } else {
+          container.innerHTML = '<p>No events found</p>';
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('events-container').innerHTML = 
+          '<p>Error loading events. Make sure the API is running!</p>';
+      });
+  </script>
+</body>
+</html>

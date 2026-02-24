@@ -13,6 +13,9 @@ router.get('/active', eventsController.getActiveEvents);
 // GET upcoming events
 router.get('/upcoming', eventsController.getUpcomingEvents);
 
+// GET ended events
+router.get('/ended', eventsController.getEndedEvents);
+
 // GET events by category
 router.get('/category/:category', eventsController.getEventsByCategory);
 

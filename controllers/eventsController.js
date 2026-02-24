@@ -116,7 +116,7 @@ exports.getActiveEvents = async (req, res) => {
     
     await base(eventsTable)
       .select({
-        filterByFormula: "{Status} = 'Active'",
+        filterByFormula: "{Status} = 'In Progress'",
         sort: [{ field: 'Start Date', direction: 'asc' }]
       })
       .eachPage((pageRecords, fetchNextPage) => {
@@ -169,6 +169,39 @@ exports.getUpcomingEvents = async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching upcoming events:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+};
+
+// Get ended events
+exports.getEndedEvents = async (req, res) => {
+  try {
+    const records = [];
+    
+    await base(eventsTable)
+      .select({
+        filterByFormula: "{Status} = 'Ended'",
+        sort: [{ field: 'Start Date', direction: 'desc' }]
+      })
+      .eachPage((pageRecords, fetchNextPage) => {
+        pageRecords.forEach(record => {
+          records.push(formatRecord(record));
+        });
+        fetchNextPage();
+      });
+
+    const resolved = await Promise.all(records.map(resolveHackathonLinks));
+
+    res.json({
+      success: true,
+      count: resolved.length,
+      data: resolved
+    });
+  } catch (error) {
+    console.error('Error fetching ended events:', error);
     res.status(500).json({
       success: false,
       error: error.message
@@ -323,7 +356,7 @@ exports.getActiveHackathons = async (req, res) => {
     
     await base(hackathonsTable)
       .select({
-        filterByFormula: "{Status} = 'Active'",
+        filterByFormula: "{Status} = 'In Progress'",
         sort: [{ field: 'Start Date', direction: 'asc' }]
       })
       .eachPage(async (pageRecords, fetchNextPage) => {

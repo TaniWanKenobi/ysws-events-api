@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const eventsRouter = require('./routes/events');
 
 const app = express();
@@ -8,6 +9,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/events', eventsRouter);
 
@@ -19,20 +21,73 @@ app.get('/health', (req, res) => {
   });
 });
 
-app.get('/', (req, res) => {
+app.get('/api', (req, res) => {
   res.json({
     message: 'Welcome to Hack Clubs Events API!',
-    endpoints: {
-      health: '/health',
-      allEvents: '/api/events',
-      activeEvents: '/api/events/active',
-      upcomingEvents: '/api/events/upcoming',
-      eventsByCategory: '/api/events/category/:category',
-      singleEvent: '/api/events/:id',
-      allHackathons: '/api/events/hackathons',
-      activeHackathons: '/api/events/hackathons/active',
-      hackathonById: '/api/events/hackathons/:id',
-      hackathonYSWS: '/api/events/hackathons/:id/ysws'
+    documentation: {
+      ysws: {
+        allEvents: {
+          url: '/api/events',
+          method: 'GET',
+          description: 'Returns all YSWS events'
+        },
+        activeEvents: {
+          url: '/api/events/active',
+          method: 'GET',
+          description: 'Returns all YSWS events with status "In Progress"'
+        },
+        upcomingEvents: {
+          url: '/api/events/upcoming',
+          method: 'GET',
+          description: 'Returns all YSWS events with status "Upcoming" and a future start date'
+        },
+        endedEvents: {
+          url: '/api/events/ended',
+          method: 'GET',
+          description: 'Returns all YSWS events with status "Ended"'
+        },
+        eventsByCategory: {
+          url: '/api/events/category/:category',
+          method: 'GET',
+          description: 'Returns YSWS events filtered by category',
+          example: '/api/events/category/Prototype'
+        },
+        singleEvent: {
+          url: '/api/events/:id',
+          method: 'GET',
+          description: 'Returns a single YSWS event by its Airtable record ID',
+          example: '/api/events/recABC123'
+        }
+      },
+      hackathons: {
+        allHackathons: {
+          url: '/api/events/hackathons',
+          method: 'GET',
+          description: 'Returns all hackathons with their linked YSWS events'
+        },
+        activeHackathons: {
+          url: '/api/events/hackathons/active',
+          method: 'GET',
+          description: 'Returns hackathons with status "In Progress"'
+        },
+        hackathonById: {
+          url: '/api/events/hackathons/:id',
+          method: 'GET',
+          description: 'Returns a single hackathon with its linked YSWS events',
+          example: '/api/events/hackathons/recPpy3V60jTUcCng'
+        },
+        hackathonYSWS: {
+          url: '/api/events/hackathons/:id/ysws',
+          method: 'GET',
+          description: 'Returns only the YSWS events linked to a specific hackathon',
+          example: '/api/events/hackathons/recPpy3V60jTUcCng/ysws'
+        }
+      },
+      health: {
+        url: '/health',
+        method: 'GET',
+        description: 'Returns API status and current timestamp'
+      }
     }
   });
 });
