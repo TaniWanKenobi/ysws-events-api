@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const eventsController = require('../controllers/eventsController');
+const cache = require('../middleware/cache');
 
 // ===== EVENT ROUTES =====
 
 // GET all events
-router.get('/', eventsController.getAllEvents);
+router.get('/', cache(300), eventsController.getAllEvents);
 
 // GET active events
 router.get('/active', eventsController.getActiveEvents);
