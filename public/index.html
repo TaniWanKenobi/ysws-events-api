@@ -4,75 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>YSWS Events</title>
-  <style>
-    body {
-      font-family: 'Phantom Sans', system-ui, sans-serif;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-      background: #fbefd6;
-    }
-    h1 {
-      color: #ec3750;
-    }
-    .events-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 20px;
-      margin-top: 30px;
-    }
-    .event-card {
-      background: white;
-      border: 3px solid #222;
-      border-radius: 8px;
-      padding: 20px;
-      box-shadow: 4px 4px 0 #222;
-    }
-    .event-card h3 {
-      margin-top: 0;
-      color: #ec3750;
-    }
-    .status {
-      display: inline-block;
-      padding: 5px 10px;
-      border-radius: 5px;
-      font-size: 0.9em;
-      font-weight: bold;
-    }
-    .status-in.progress {
-      background: #33d6a6;
-      color: white;
-    }
-    .status-upcoming {
-      background: #5bc0de;
-      color: white;
-    }
-    .status-ended {
-      background: #8492a6;
-      color: white;
-    }
-    h2 {
-      color: #ec3750;
-      margin-top: 40px;
-    }
-    .btn {
-      display: inline-block;
-      padding: 10px 20px;
-      background: #ec3750;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-      margin-top: 10px;
-    }
-    .btn:hover {
-      background: #d32f44;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <h1>Hack Club Events</h1>
-  <p>You Ship, We Ship!</p>
-  
+  <p>You Ship, We Ship! · <a href="/api" style="color:#ec3750;">API Docs</a></p>
+
   <h2>🛠 YSWS Events</h2>
   <div id="events-container" class="events-grid">
     <p>Loading events...</p>
@@ -83,72 +20,6 @@
     <p>Loading hackathons...</p>
   </div>
 
-  <script>
-    function statusClass(status) {
-      return 'status-' + status.toLowerCase().replace(/ /g, '.');
-    }
-
-    function renderEventCard(event) {
-      return `
-        <div class="event-card">
-          <h3>${event.Name}</h3>
-          <span class="status ${statusClass(event.Status)}">${event.Status}</span>
-          <p>${event.Description || ''}</p>
-          <p><strong>Due:</strong> ${new Date(event['End Date']).toLocaleDateString()}</p>
-          ${event.Website ? `<a href="${event.Website}" class="btn">Learn More →</a>` : ''}
-        </div>
-      `;
-    }
-
-    // Fetch YSWS events
-    fetch('/api/events')
-      .then(response => response.json())
-      .then(data => {
-        const container = document.getElementById('events-container');
-        if (data.success && data.data.length > 0) {
-          container.innerHTML = data.data.map(renderEventCard).join('');
-        } else {
-          container.innerHTML = '<p>No events found</p>';
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        document.getElementById('events-container').innerHTML =
-          '<p>Error loading events. Make sure the API is running!</p>';
-      });
-
-    // Fetch hackathons with their YSWS
-    fetch('/api/events/hackathons')
-      .then(response => response.json())
-      .then(data => {
-        const container = document.getElementById('hackathons-container');
-        if (data.success && data.data.length > 0) {
-          container.innerHTML = data.data.map(hackathon => `
-            <div class="event-card">
-              <h3>${hackathon.Name}</h3>
-              <span class="status ${statusClass(hackathon.Status)}">${hackathon.Status}</span>
-              <p>${hackathon.Description || ''}</p>
-              <p><strong>Dates:</strong> ${new Date(hackathon['Start Date']).toLocaleDateString()} — ${new Date(hackathon['End Date']).toLocaleDateString()}</p>
-              ${hackathon.yswsCount > 0 ? `<p><strong>YSWS Challenges:</strong> ${hackathon.yswsCount}</p>` : ''}
-              ${hackathon.yswsDetails ? hackathon.yswsDetails.map(ysws => `
-                <div style="margin-top:10px;padding:10px;background:#f9f9f9;border-radius:5px;">
-                  <strong>${ysws.Name}</strong>
-                  <p style="margin:5px 0">${ysws.Description || ''}</p>
-                  ${ysws.Website ? `<a href="${ysws.Website}" class="btn" style="font-size:0.85em;padding:5px 12px;">View →</a>` : ''}
-                </div>
-              `).join('') : ''}
-              ${hackathon.Website ? `<a href="${hackathon.Website}" class="btn">Learn More →</a>` : ''}
-            </div>
-          `).join('');
-        } else {
-          container.innerHTML = '<p>No hackathons found</p>';
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        document.getElementById('hackathons-container').innerHTML =
-          '<p>Error loading hackathons. Make sure the API is running!</p>';
-      });
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>
