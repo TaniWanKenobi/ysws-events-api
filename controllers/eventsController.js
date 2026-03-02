@@ -8,6 +8,18 @@ const base = new Airtable({
 const eventsTable = process.env.AIRTABLE_EVENTS_TABLE || 'Events';
 const hackathonsTable = process.env.AIRTABLE_HACKATHONS_TABLE || 'Hackathons';
 
+const STATUS_FILTERS = {
+  upcoming: 'Upcoming',
+  ended: 'Ended',
+  'in progress': 'In Progress',
+  'in-progress': 'In Progress',
+  inprogress: 'In Progress'
+};
+
+const normalizeStatusFilter = (status) => {
+  if (!status) return null;
+  return STATUS_FILTERS[String(status).trim().toLowerCase()] || null;
+};
 
 const formatRecord = (record) => {
   return {
@@ -60,13 +72,26 @@ const resolveHackathonLinks = async (record) => {
 // Get all events
 exports.getAllEvents = async (req, res) => {
   try {
+    const normalizedStatus = normalizeStatusFilter(req.query.status);
+    if (req.query.status && !normalizedStatus) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid status filter. Use Upcoming, In Progress, or Ended.'
+      });
+    }
+
     const records = [];
+    const selectOptions = {
+      view: 'Grid view',
+      sort: [{ field: 'Start Date', direction: 'desc' }]
+    };
+
+    if (normalizedStatus) {
+      selectOptions.filterByFormula = `{Status} = '${normalizedStatus}'`;
+    }
     
     await base(eventsTable)
-      .select({
-        view: 'Grid view',
-        sort: [{ field: 'Start Date', direction: 'desc' }]
-      })
+      .select(selectOptions)
       .eachPage((pageRecords, fetchNextPage) => {
         pageRecords.forEach(record => {
           records.push(formatRecord(record));
@@ -309,13 +334,26 @@ exports.deleteEvent = async (req, res) => {
 // Get all hackathons with their YSWS events
 exports.getAllHackathons = async (req, res) => {
   try {
+    const normalizedStatus = normalizeStatusFilter(req.query.status);
+    if (req.query.status && !normalizedStatus) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid status filter. Use Upcoming, In Progress, or Ended.'
+      });
+    }
+
     const records = [];
+    const selectOptions = {
+      view: 'Grid view',
+      sort: [{ field: 'Start Date', direction: 'desc' }]
+    };
+
+    if (normalizedStatus) {
+      selectOptions.filterByFormula = `{Status} = '${normalizedStatus}'`;
+    }
     
     await base(hackathonsTable)
-      .select({
-        view: 'Grid view',
-        sort: [{ field: 'Start Date', direction: 'desc' }]
-      })
+      .select(selectOptions)
       .eachPage(async (pageRecords, fetchNextPage) => {
         for (const record of pageRecords) {
           const formattedRecord = formatRecord(record);

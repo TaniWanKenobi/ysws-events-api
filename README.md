@@ -44,7 +44,7 @@ API for Hack Club's YSWS (You Ship, We Ship) events and hackathons. Pulls data f
 
 | Method | URL | Description |
 |--------|-----|-------------|
-| GET | `/api/events` | All YSWS events |
+| GET | `/api/events` | All YSWS events (supports `?status=Upcoming`, `?status=In%20Progress`, or `?status=Ended`) |
 | GET | `/api/events/active` | Events with status "In Progress" |
 | GET | `/api/events/upcoming` | Events with status "Upcoming" |
 | GET | `/api/events/ended` | Events with status "Ended" |
@@ -55,7 +55,7 @@ API for Hack Club's YSWS (You Ship, We Ship) events and hackathons. Pulls data f
 
 | Method | URL | Description |
 |--------|-----|-------------|
-| GET | `/api/events/hackathons` | All hackathons with linked YSWS events |
+| GET | `/api/events/hackathons` | All hackathons with linked YSWS events (supports `?status=Upcoming`, `?status=In%20Progress`, or `?status=Ended`) |
 | GET | `/api/events/hackathons/active` | Active hackathons |
 | GET | `/api/events/hackathons/:id` | Single hackathon with its YSWS events |
 | GET | `/api/events/hackathons/:id/ysws` | Only the YSWS events for a hackathon |

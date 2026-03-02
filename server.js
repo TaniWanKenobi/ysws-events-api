@@ -29,7 +29,11 @@ app.get('/api', (req, res) => {
         allEvents: {
           url: '/api/events',
           method: 'GET',
-          description: 'Returns all YSWS events'
+          description: 'Returns all YSWS events (optionally filtered by status)',
+          queryParams: {
+            status: 'Upcoming | In Progress | Ended'
+          },
+          example: '/api/events?status=Upcoming'
         },
         activeEvents: {
           url: '/api/events/active',
@@ -63,7 +67,11 @@ app.get('/api', (req, res) => {
         allHackathons: {
           url: '/api/events/hackathons',
           method: 'GET',
-          description: 'Returns all hackathons with their linked YSWS events'
+          description: 'Returns all hackathons with their linked YSWS events (optionally filtered by status)',
+          queryParams: {
+            status: 'Upcoming | In Progress | Ended'
+          },
+          example: '/api/events/hackathons?status=Ended'
         },
         activeHackathons: {
           url: '/api/events/hackathons/active',

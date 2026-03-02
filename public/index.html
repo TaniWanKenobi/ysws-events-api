@@ -10,12 +10,30 @@
   <h1>Hack Club Events</h1>
   <p>You Ship, We Ship! · <a href="/api" style="color:#ec3750;">API Docs</a></p>
 
-  <h2>🛠 YSWS Events</h2>
+  <h2> YSWS Events</h2>
+  <div class="filter-row">
+    <label for="status-filter">Filter by status:</label>
+    <select id="status-filter">
+      <option value="">All</option>
+      <option value="Upcoming">Upcoming</option>
+      <option value="In Progress">In Progress</option>
+      <option value="Ended" selected>Ended</option>
+    </select>
+  </div>
   <div id="events-container" class="events-grid">
     <p>Loading events...</p>
   </div>
 
-  <h2>🏆 Hackathons</h2>
+  <h2> Hackathons</h2>
+  <div class="filter-row">
+    <label for="hackathon-status-filter">Filter by status:</label>
+    <select id="hackathon-status-filter">
+      <option value="">All</option>
+      <option value="Upcoming">Upcoming</option>
+      <option value="In Progress">In Progress</option>
+      <option value="Ended" selected>Ended</option>
+    </select>
+  </div>
   <div id="hackathons-container" class="events-grid">
     <p>Loading hackathons...</p>
   </div>
