@@ -1,12 +1,13 @@
 function statusClass(status) {
+  if (!status) return 'status-unknown';
   return 'status-' + status.toLowerCase().replace(/ /g, '.');
 }
 
 function renderEventCard(event) {
   return `
     <div class="event-card">
-      <h3>${event.Name}</h3>
-      <span class="status ${statusClass(event.Status)}">${event.Status}</span>
+      <h3>${event.Name || 'Untitled'}</h3>
+      <span class="status ${statusClass(event.Status)}">${event.Status || 'Unknown'}</span>
       <p>${event.Description || ''}</p>
       <p><strong>Due:</strong> ${new Date(event['End Date']).toLocaleDateString()}</p>
       ${event.Website ? `<a href="${event.Website}" class="btn">Learn More →</a>` : ''}
@@ -36,7 +37,10 @@ function renderHackathonCard(hackathon) {
 
 // Fetch YSWS events
 fetch('/api/events')
-  .then(response => response.json())
+  .then(response => {
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json();
+  })
   .then(data => {
     const container = document.getElementById('events-container');
     if (data.success && data.data.length > 0) {
@@ -48,7 +52,8 @@ fetch('/api/events')
   .catch(error => {
     console.error('Error:', error);
     document.getElementById('events-container').innerHTML =
-      '<p>Error loading events. Make sure the API is running!</p>';
+      `<p>Error: ${error.message}</p>`;
+       '<p>Error loading events. Make sure the API is running!</p>';
   });
 
 // Fetch hackathons with their YSWS

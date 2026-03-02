@@ -26,7 +26,9 @@ const cache = (duration) => {
 
       const originalJson = res.json.bind(res);
       res.json = (data) => {
-        client.set(key, data, { ex: duration });
+        if (data.success) {
+          client.set(key, data, { ex: duration });
+        }
         originalJson(data);
       };
 
