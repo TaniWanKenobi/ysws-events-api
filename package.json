@@ -16,6 +16,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@slack/webhook": "^7.0.7",
     "@upstash/redis": "^1.36.3",
     "airtable": "^0.12.2",
     "cors": "^2.8.6",
