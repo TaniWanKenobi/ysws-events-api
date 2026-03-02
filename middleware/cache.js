@@ -1,11 +1,26 @@
 const redis = require('redis');
-const client = redis.createClient();
 
-client.on('error', (err) => console.error('Redis error:', err));
-client.connect();
+let client = null;
+let isConnected = false;
+
+(async () => {
+  try {
+    client = redis.createClient({
+      url: process.env.REDIS_URL || 'redis://localhost:6379'
+    });
+    client.on('error', () => {});
+    await client.connect();
+    isConnected = true;
+    console.log('Redis connected — caching enabled');
+  } catch {
+    console.log('Redis not available — caching disabled');
+  }
+})();
 
 const cache = (duration) => {
   return async (req, res, next) => {
+    if (!isConnected) return next();
+
     const key = `events:${req.originalUrl}`;
 
     try {
@@ -21,7 +36,7 @@ const cache = (duration) => {
       };
 
       next();
-    } catch (error) {
+    } catch {
       next();
     }
   };
