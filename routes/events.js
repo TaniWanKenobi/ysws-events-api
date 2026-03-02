@@ -7,7 +7,7 @@ const authenticateAPIKey = require('../middleware/auth');
 // ===== EVENT ROUTES =====
 
 // GET all events
-router.get('/', cache(300), eventsController.getAllEvents);
+router.get('/', eventsController.getAllEvents);
 
 // GET active events
 router.get('/active', eventsController.getActiveEvents);
