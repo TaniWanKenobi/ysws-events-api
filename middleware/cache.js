@@ -1,37 +1,32 @@
-const redis = require('redis');
+const { Redis } = require('@upstash/redis');
 
 let client = null;
-let isConnected = false;
 
-(async () => {
-  try {
-    client = redis.createClient({
-      url: process.env.REDIS_URL || 'redis://localhost:6379'
-    });
-    client.on('error', () => {});
-    await client.connect();
-    isConnected = true;
-    console.log('Redis connected — caching enabled');
-  } catch {
-    console.log('Redis not available — caching disabled');
-  }
-})();
+if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+  client = new Redis({
+    url: process.env.UPSTASH_REDIS_REST_URL,
+    token: process.env.UPSTASH_REDIS_REST_TOKEN,
+  });
+  console.log('Upstash Redis connected — caching enabled');
+} else {
+  console.log('Upstash Redis not configured — caching disabled');
+}
 
 const cache = (duration) => {
   return async (req, res, next) => {
-    if (!isConnected) return next();
+    if (!client) return next();
 
     const key = `events:${req.originalUrl}`;
 
     try {
       const cached = await client.get(key);
       if (cached) {
-        return res.json(JSON.parse(cached));
+        return res.json(cached);
       }
 
       const originalJson = res.json.bind(res);
       res.json = (data) => {
-        client.setEx(key, duration, JSON.stringify(data));
+        client.set(key, data, { ex: duration });
         originalJson(data);
       };
 
