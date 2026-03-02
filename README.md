@@ -1,41 +1,87 @@
 # YSWS Events API
 
-API for Hack Club's YSWS (You Ship, We Ship) events and hackathons. Pulls data from Airtable and serves it as a REST API.
+<a id="readme-top"></a>
+
+<p align="center">
+  <a href="https://ysws-events-api.vercel.app/api">
+    <img src="https://img.shields.io/badge/API-Live-ec3750?style=for-the-badge" alt="Live API">
+  </a>
+  <a href="https://expressjs.com/">
+    <img src="https://img.shields.io/badge/Express-5.x-000000?style=for-the-badge&logo=express" alt="Express">
+  </a>
+  <a href="https://airtable.com/">
+    <img src="https://img.shields.io/badge/Airtable-Data%20Source-18BFFF?style=for-the-badge&logo=airtable&logoColor=white" alt="Airtable">
+  </a>
+  <a href="https://vercel.com/">
+    <img src="https://img.shields.io/badge/Vercel-Deployment-000000?style=for-the-badge&logo=vercel" alt="Vercel">
+  </a>
+</p>
+
+<br />
+
+<div align="center">
+  <img src="https://hackclub.com/stickers/orphmoji_yippee.png" alt="YSWS Events API" width="120">
+</div>
+
+<h3 align="center">Hack Club YSWS + Hackathons API</h3>
+
+<p align="center">
+  REST API for listing, filtering, and managing YSWS events and hackathons backed by Airtable.
+</p>
+
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li><a href="#about-the-project">About The Project</a></li>
+    <li><a href="#built-with">Built With</a></li>
+    <li><a href="#setup">Setup</a></li>
+    <li><a href="#project-structure">Project Structure</a></li>
+    <li><a href="#api-endpoints">API Endpoints</a></li>
+    <li><a href="#powershell-examples-production-api">PowerShell Examples (Production API)</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ol>
+</details>
+
+## About The Project
+
+This API powers Hack Club YSWS and hackathon event data from Airtable.
+
+It supports:
+- Read endpoints for events and hackathons
+- Status filtering (`Upcoming`, `In Progress`, `Ended`) on list endpoints
+- Category filtering for events
+- Protected create/update/delete endpoints using `x-api-key`
+
+Live API docs: `https://ysws-events-api.vercel.app/api`
+
+## Built With
+
+- [Node.js](https://nodejs.org/)
+- [Express](https://expressjs.com/)
+- [Airtable](https://airtable.com/)
+- [Vercel](https://vercel.com/)
+- [Upstash Redis](https://upstash.com/) (cache)
 
 ## Setup
 
 1. Install dependencies:
-   ```
+   ```bash
    npm install
    ```
-
-2. Create a `.env` file with your Airtable credentials:
-   ```
-   AIRTABLE_API_KEY=your_personal_access_token
-   AIRTABLE_BASE_ID=your_base_id
-   AIRTABLE_EVENTS_TABLE=YSWS
-   AIRTABLE_HACKATHONS_TABLE=Hackathons
-   PORT=3000
-   NODE_ENV=development
-   ```
-
-3. Run the server:
-   ```
+2. Create a `.env` file (see `.env.example`) with your credentials.
+3. Run locally:
+   ```bash
    npm run dev
    ```
 
 ## Project Structure
 
-```
-├── public/              # Static frontend files
-│   └── index.html       # Demo page that displays events
-├── controllers/
-│   └── eventsController.js  # All API logic (Airtable queries, formatting)
-├── routes/
-│   └── events.js        # Maps URLs to controller functions
-├── server.js            # Entry point — starts Express, loads middleware
-├── .env                 # Your secrets (not committed to git)
-└── package.json
+```txt
+public/                  # Static frontend demo
+controllers/             # API controller logic
+routes/                  # Express route definitions
+middleware/              # Auth + cache middleware
+server.js                # App entrypoint
 ```
 
 ## API Endpoints
@@ -45,26 +91,32 @@ API for Hack Club's YSWS (You Ship, We Ship) events and hackathons. Pulls data f
 | Method | URL | Description |
 |--------|-----|-------------|
 | GET | `/api/events` | All YSWS events (supports `?status=Upcoming`, `?status=In%20Progress`, or `?status=Ended`) |
-| GET | `/api/events/active` | Events with status "In Progress" |
-| GET | `/api/events/upcoming` | Events with status "Upcoming" |
-| GET | `/api/events/ended` | Events with status "Ended" |
-| GET | `/api/events/category/:category` | Events filtered by category (e.g., `/category/Prototype`) |
+| GET | `/api/events/active` | Events with status `In Progress` |
+| GET | `/api/events/upcoming` | Events with status `Upcoming` |
+| GET | `/api/events/ended` | Events with status `Ended` |
+| GET | `/api/events/category/:category` | Events filtered by category |
 | GET | `/api/events/:id` | Single event by Airtable record ID |
+| POST | `/api/events` | Create event (`x-api-key` required) |
+| PATCH | `/api/events/:id` | Update event (`x-api-key` required) |
+| DELETE | `/api/events/:id` | Delete event (`x-api-key` required) |
 
 ### Hackathons
 
 | Method | URL | Description |
 |--------|-----|-------------|
-| GET | `/api/events/hackathons` | All hackathons with linked YSWS events (supports `?status=Upcoming`, `?status=In%20Progress`, or `?status=Ended`) |
-| GET | `/api/events/hackathons/active` | Active hackathons |
-| GET | `/api/events/hackathons/:id` | Single hackathon with its YSWS events |
-| GET | `/api/events/hackathons/:id/ysws` | Only the YSWS events for a hackathon |
+| GET | `/api/events/hackathons` | All hackathons (supports `?status=Upcoming`, `?status=In%20Progress`, or `?status=Ended`) |
+| GET | `/api/events/hackathons/active` | Hackathons with status `In Progress` |
+| GET | `/api/events/hackathons/:id` | Single hackathon with linked YSWS |
+| GET | `/api/events/hackathons/:id/ysws` | Linked YSWS events for one hackathon |
+| POST | `/api/events/hackathons` | Create hackathon (`x-api-key` required) |
+| PATCH | `/api/events/hackathons/:id` | Update hackathon (`x-api-key` required) |
+| DELETE | `/api/events/hackathons/:id` | Delete hackathon (`x-api-key` required) |
 
 ### Other
 
 | Method | URL | Description |
 |--------|-----|-------------|
-| GET | `/` | API documentation (list of endpoints) |
+| GET | `/api` | API documentation JSON |
 | GET | `/health` | Health check |
 
 ## PowerShell Examples (Production API)
@@ -86,3 +138,9 @@ Delete an event:
 ```powershell
 Invoke-RestMethod -Uri "https://ysws-events-api.vercel.app/api/events/RECORD_ID_HERE" -Method Delete -Headers @{"x-api-key"="your-api-key-here"}
 ```
+
+## Contact
+
+Tanishq Goyal - @Tanuki - [tanishqgoyal590@gmail.com](mailto:tanishqgoyal590@gmail.com)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
