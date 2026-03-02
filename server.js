@@ -61,6 +61,24 @@ app.get('/api', (req, res) => {
           method: 'GET',
           description: 'Returns a single YSWS event by its Airtable record ID',
           example: '/api/events/recABC123'
+        },
+        createEvent: {
+          url: '/api/events',
+          method: 'POST',
+          auth: 'x-api-key header required',
+          description: 'Creates a new YSWS event'
+        },
+        updateEvent: {
+          url: '/api/events/:id',
+          method: 'PATCH',
+          auth: 'x-api-key header required',
+          description: 'Updates an existing YSWS event'
+        },
+        deleteEvent: {
+          url: '/api/events/:id',
+          method: 'DELETE',
+          auth: 'x-api-key header required',
+          description: 'Deletes a YSWS event'
         }
       },
       hackathons: {
@@ -95,6 +113,14 @@ app.get('/api', (req, res) => {
         url: '/health',
         method: 'GET',
         description: 'Returns API status and current timestamp'
+      },
+      mutationExamples: {
+        createEventPowerShell:
+          "Invoke-RestMethod -Uri 'https://ysws-events-api.vercel.app/api/events' -Method Post -Headers @{'x-api-key'='your-api-key-here'; 'Content-Type'='application/json'} -Body '{\"Name\":\"Test Event\",\"Status\":\"Upcoming\",\"Start Date\":\"2026-04-01\",\"End Date\":\"2026-04-30\",\"Description\":\"A test event\"}'",
+        updateEventPowerShell:
+          "Invoke-RestMethod -Uri 'https://ysws-events-api.vercel.app/api/events/RECORD_ID_HERE' -Method Patch -Headers @{'x-api-key'='your-api-key-here'; 'Content-Type'='application/json'} -Body '{\"Status\":\"In Progress\"}'",
+        deleteEventPowerShell:
+          "Invoke-RestMethod -Uri 'https://ysws-events-api.vercel.app/api/events/RECORD_ID_HERE' -Method Delete -Headers @{'x-api-key'='your-api-key-here'}"
       }
     }
   });

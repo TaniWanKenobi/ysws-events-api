@@ -66,3 +66,23 @@ API for Hack Club's YSWS (You Ship, We Ship) events and hackathons. Pulls data f
 |--------|-----|-------------|
 | GET | `/` | API documentation (list of endpoints) |
 | GET | `/health` | Health check |
+
+## PowerShell Examples (Production API)
+
+Create an event:
+
+```powershell
+Invoke-RestMethod -Uri "https://ysws-events-api.vercel.app/api/events" -Method Post -Headers @{"x-api-key"="your-api-key-here"; "Content-Type"="application/json"} -Body '{"Name":"Test Event","Status":"Upcoming","Start Date":"2026-04-01","End Date":"2026-04-30","Description":"A test event"}'
+```
+
+Update an event:
+
+```powershell
+Invoke-RestMethod -Uri "https://ysws-events-api.vercel.app/api/events/RECORD_ID_HERE" -Method Patch -Headers @{"x-api-key"="your-api-key-here"; "Content-Type"="application/json"} -Body '{"Status":"In Progress"}'
+```
+
+Delete an event:
+
+```powershell
+Invoke-RestMethod -Uri "https://ysws-events-api.vercel.app/api/events/RECORD_ID_HERE" -Method Delete -Headers @{"x-api-key"="your-api-key-here"}
+```
