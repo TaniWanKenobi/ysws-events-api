@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const eventsController = require('../controllers/eventsController');
 const cache = require('../middleware/cache');
+const authenticateAPIKey = require('../middleware/auth');
 
 // ===== EVENT ROUTES =====
 
@@ -35,13 +36,13 @@ router.get('/hackathons/:id', eventsController.getHackathonById);
 router.get('/hackathons/:hackathonId/ysws', eventsController.getYSWSForHackathon);
 
 // POST create new hackathon
-router.post('/hackathons', eventsController.createHackathon);
+router.post('/hackathons', authenticateAPIKey, eventsController.createHackathon);
 
 // PATCH update hackathon
-router.patch('/hackathons/:id', eventsController.updateHackathon);
+router.patch('/hackathons/:id', authenticateAPIKey, eventsController.updateHackathon);
 
 // DELETE hackathon
-router.delete('/hackathons/:id', eventsController.deleteHackathon);
+router.delete('/hackathons/:id', authenticateAPIKey, eventsController.deleteHackathon);
 
 // ===== CATCH-ALL EVENT BY ID (must be last) =====
 
@@ -49,12 +50,12 @@ router.delete('/hackathons/:id', eventsController.deleteHackathon);
 router.get('/:id', eventsController.getEventById);
 
 // POST create new event
-router.post('/', eventsController.createEvent);
+router.post('/', authenticateAPIKey, eventsController.createEvent);
 
 // PATCH update event
-router.patch('/:id', eventsController.updateEvent);
+router.patch('/:id', authenticateAPIKey, eventsController.updateEvent);
 
 // DELETE event
-router.delete('/:id', eventsController.deleteEvent);
+router.delete('/:id', authenticateAPIKey, eventsController.deleteEvent);
 
 module.exports = router;
