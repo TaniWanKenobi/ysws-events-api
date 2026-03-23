@@ -46,7 +46,7 @@
 
 This API powers Hack Club YSWS and hackathon event data from Airtable.
 
-It can be used [here](https://ysws-events-api.vercel.app/)!
+It can be used [here](https://events-api.hackclub.dev/)!
 
 It supports:
 - Read endpoints for events and hackathons
